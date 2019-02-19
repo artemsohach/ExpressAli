@@ -33,6 +33,9 @@ window.addEventListener('DOMContentLoaded', () => {
 
       trigger.remove();
 
+      showConfirm();
+      calcGoods(1);
+
       removeBtn.classList.add('goods__item-remove');
       removeBtn.innerHTML = '&times';
       item.appendChild(removeBtn);
@@ -41,6 +44,74 @@ window.addEventListener('DOMContentLoaded', () => {
       if (empty) {
         empty.remove();
       }
+      calcTotal();
+      removeFromCart();
     });
   });
+
+  //2 lesson
+  function sliceTitle() {
+    titles.forEach(function (item) {
+      if (item.textContent.length < 70) {
+        return;
+      } else {
+        const str = item.textContent.slice(0, 71) + '...';
+        item.textContent = str;
+      }
+    })
+  }
+  sliceTitle();
+
+  function showConfirm() {
+    confirm.style.display = 'block';
+    let counter = 100;
+
+    const id = setInterval(frame, 10);
+
+    function frame() {
+      if (counter == 10) {
+        clearInterval(id);
+        confirm.style.display = 'none';
+      } else {
+        counter--;
+        confirm.style.transform = `translateY(-${counter}px)`;
+        confirm.style.opacity = '.' + counter;
+      }
+    }
+  }
+
+  function calcGoods(i) {
+    const items = cartWrapper.querySelectorAll('.goods__item');
+    badge.textContent = i + items.length;
+  }
+
+  function calcTotal() {
+    const prices = document.querySelectorAll('.cart__wrapper > .goods__item > .goods__price > span');
+    let total = 0;
+    prices.forEach(function (item) {
+      total += +item.textContent;
+    });
+    totalCost.textContent = total;
+  }
+
+  function removeFromCart() {
+    const removeBtn = cartWrapper.querySelectorAll('.goods__item-remove');
+    removeBtn.forEach(function (btn) {
+      btn.addEventListener('click', () => {
+        btn.parentElement.remove();
+        calcGoods(0);
+        calcTotal();
+
+        let cartItems = cartWrapper.querySelectorAll('.goods__item');
+        if (1 + cartItems.length > 1) {
+          return false;
+        } else {
+          const newEmpty = document.createElement('div');
+          newEmpty.classList.add("empty");
+          newEmpty.textContent = "Ваша корзина пока пуста";
+          cartWrapper.appendChild(newEmpty);
+        }
+      });
+    });
+  };
 });
